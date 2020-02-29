@@ -272,7 +272,7 @@ def start_listener():
                     routing_key=saga_routing_key_order)
 
   receive_channel.basic_qos(prefetch_size=0, prefetch_count=1)
-  receive_channel.basic_consume(listener_callback, queue=receive_queue_name, no_ack=True)
+  receive_channel.basic_consume(receive_queue_name, listener_callback)
   receive_channel.start_consuming()          
  
 send_channel = connection.channel()
