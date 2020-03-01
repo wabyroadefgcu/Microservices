@@ -19,6 +19,7 @@ import sys
 import json
 import datetime
 import threading
+import asyncio
 
 app = Flask(__name__)
 postgres_address = "msdemo-db-product"
@@ -386,9 +387,9 @@ def event_order_finalized(message):
   db_connection.commit()
   db_connection.close()    
   
-def init_event_bus():
+async def init_event_bus():
   threading.Thread(target=start_listener).start() 
-  start_sender()
+  await start_sender()
 
 def start_listener():
   #Receive from Event Store  
@@ -417,7 +418,8 @@ def start_listener():
  
 send_channel = connection.channel()
 
-def start_sender():
+# added async to stop Python exceptions preventing execution
+async def start_sender():
   #Send to Event Store  
   send_channel.exchange_declare(exchange=send_exchange_name, exchange_type='direct')
   send_channel.queue_declare(queue=send_queue_name, durable=True, exclusive=False, auto_delete=False, arguments=None)

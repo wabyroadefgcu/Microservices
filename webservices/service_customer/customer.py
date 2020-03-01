@@ -247,9 +247,9 @@ def listener_callback(ch, method, properties, body):
     elif (response_json['Event'] == "OrderFinalized"):
       event_order_finalized(response_json['Data'])
   
-def init_event_bus():
+async def init_event_bus():
   threading.Thread(target=start_listener).start()  
-  start_sender()
+  await start_sender()
 
 def start_listener():
   #Receive from Event Store  
@@ -276,9 +276,10 @@ def start_listener():
   receive_channel.start_consuming()          
  
 send_channel = connection.channel()
-def start_sender():
+
+# added async def to stop Python exceptions preventing execution
+async def start_sender():
   #Send to Event Store      
-  send_channel.exchange_declare(exchange=send_exchange_name, exchange_type='direct')
   send_channel.exchange_declare(exchange=send_exchange_name, exchange_type='direct')
   send_channel.queue_declare(queue=send_queue_name, durable=True, exclusive=False, auto_delete=False, arguments=None)
   send_channel.queue_bind(queue=send_queue_name, exchange=send_exchange_name, routing_key=send_routing_key)  
