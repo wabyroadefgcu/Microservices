@@ -1,0 +1,4 @@
+# Ignore actual data files
+*
+# Don't ignore the .gitignore
+!.gitignore
